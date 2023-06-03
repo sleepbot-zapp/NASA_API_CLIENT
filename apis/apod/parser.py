@@ -12,7 +12,7 @@ class Apod:
 
     @property
     def copyright(self):
-        return self.data.get("copyright")
+        return self.data.get("copyright") or None
 
     @property
     def date(self):
