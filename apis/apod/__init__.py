@@ -4,4 +4,4 @@ from httpx import get
 from .errors import *
 
 
-all = {"Date", "APOD", "Apod", "DateBeyondException", "IncorrectDataTypeException"}
+all = {"APOD", "Apod"}

@@ -1,24 +1,10 @@
 from httpx import get as g
-from ..base_model import Base
+from ..base_models import Base, Date
 from .parser import Apod
 from datetime import date as d
-from .errors import DateBeyondException, IncorrectDataTypeException
+from ..errors import IncorrectDataTypeException, DateBeyondException
 from warnings import warn
 
-
-class Date:
-    def __init__(self, d: int | str, m: int | str, y: int | str) -> None:
-        self.d = d if len(str(d)) == 2 else f"0{d}"
-        self.m = m if len(str(m)) == 2 else f"0{m}"
-        self.y = y
-
-    def __str__(self) -> str:
-        return f"{self.y}-{self.m}-{self.d}"
-
-    @classmethod
-    def from_str__or_int(cls, string: str | int):
-        string = str(string).replace("-", "").replace("/", "")
-        return Date(string[:2], string[2:4], string[4:])
 
 
 class APOD(Base):
@@ -33,7 +19,7 @@ class APOD(Base):
             Apod(g(self.base_url, params={"api_key": self.api_key}).json())
         )
 
-    def date(self, date: Date | str) -> Apod:
+    def date(self, date: Date|int|str) -> Apod:
         if not isinstance(date, Date) and (
             isinstance(date, str) or isinstance(date, int)
         ):
@@ -49,7 +35,7 @@ class APOD(Base):
             )
         )
 
-    def range_dates(self, sd: Date, ed: Date) -> list[Apod]:
+    def range_dates(self, sd: Date|int|str, ed: Date|int|str) -> list[Apod]:
         if not isinstance(sd, Date) and (isinstance(sd, str) or isinstance(sd, int)):
             sd = Date.from_str(sd)
         else:
