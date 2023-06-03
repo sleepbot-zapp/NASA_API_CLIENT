@@ -33,7 +33,7 @@ class APOD(Base):
     def range_dates(self, sd: Date, ed: Date) -> list[Apod]:
         results = get(
             self.base_url,
-            params={"api_key": self.api_key, "start_date": sd, "end_date": ed},
+            params={"api_key": self.api_key, "start_date": sd, "end_date": ed}, # type: ignore
         )
         return [Apod(i) for i in results.json()]
 
