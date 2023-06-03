@@ -1,10 +1,11 @@
 from ..errors import ApiKeyInvalidException
 
+
 class Apod:
     def __init__(self, data) -> None:
         self.data = data
         try:
-            self.data['error']['message']
+            self.data["error"]["message"]
         except KeyError:
             pass
         else:

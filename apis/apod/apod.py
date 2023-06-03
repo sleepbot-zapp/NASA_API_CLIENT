@@ -7,17 +7,17 @@ from warnings import warn
 
 
 class Date:
-    def __init__(self, d: int|str, m: int|str, y: int|str) -> None:
+    def __init__(self, d: int | str, m: int | str, y: int | str) -> None:
         self.d = d if len(str(d)) == 2 else f"0{d}"
         self.m = m if len(str(m)) == 2 else f"0{m}"
         self.y = y
 
     def __str__(self) -> str:
         return f"{self.y}-{self.m}-{self.d}"
-    
+
     @classmethod
-    def from_str__or_int(cls, string: str|int):
-        string = str(string).replace("-", "").replace("/", '')
+    def from_str__or_int(cls, string: str | int):
+        string = str(string).replace("-", "").replace("/", "")
         return Date(string[:2], string[2:4], string[4:])
 
 
@@ -29,31 +29,35 @@ class APOD(Base):
         self.image_only = image_only
 
     def today(self) -> Apod:
-        return self.check_image_only_type(Apod(g(self.base_url, params={"api_key": self.api_key}).json()))
+        return self.check_image_only_type(
+            Apod(g(self.base_url, params={"api_key": self.api_key}).json())
+        )
 
-    def date(self, date: Date|str) -> Apod:
-        if not isinstance(date, Date) and (isinstance(date, str)  or isinstance(date, int)):
+    def date(self, date: Date | str) -> Apod:
+        if not isinstance(date, Date) and (
+            isinstance(date, str) or isinstance(date, int)
+        ):
             date = Date.from_str(date)
         else:
-            raise IncorrectDataTypeException(type(date),'Date, str, int')
+            raise IncorrectDataTypeException(type(date), "Date, str, int")
         self.checkdate(date)
         return self.check_image_only_type(
             Apod(
                 g(
-                   self.base_url, params={"api_key": self.api_key, "date": str(date)}
+                    self.base_url, params={"api_key": self.api_key, "date": str(date)}
                 ).json()
             )
         )
 
     def range_dates(self, sd: Date, ed: Date) -> list[Apod]:
-        if not isinstance(sd, Date) and (isinstance(sd, str)  or isinstance(sd, int)):
+        if not isinstance(sd, Date) and (isinstance(sd, str) or isinstance(sd, int)):
             sd = Date.from_str(sd)
         else:
-            raise IncorrectDataTypeException(type(sd),'Date, str, int')
-        if not isinstance(ed, Date) and (isinstance(ed, str)  or isinstance(ed, int)):
+            raise IncorrectDataTypeException(type(sd), "Date, str, int")
+        if not isinstance(ed, Date) and (isinstance(ed, str) or isinstance(ed, int)):
             ed = Date.from_str(ed)
         else:
-            raise IncorrectDataTypeException(type(ed),'Date, str, int')
+            raise IncorrectDataTypeException(type(ed), "Date, str, int")
         self.checkdate(sd)
         self.checkdate(ed)
         results = g(
@@ -66,7 +70,9 @@ class APOD(Base):
             return [Apod(i).url for i in results.json()]
         elif self.image_only == 2:
             return [Apod(i).hdurl for i in results.json()]
-        warn("The Image value type is invalid (it can have one of the following values : 0, 1, 2)")
+        warn(
+            "The Image value type is invalid (it can have one of the following values : 0, 1, 2)"
+        )
         return [Apod(i) for i in results.json()]
 
     def rand_images(self, n: int = 1) -> list[Apod]:
@@ -77,7 +83,9 @@ class APOD(Base):
             return [Apod(i).url for i in results.json()]
         elif self.image_only == 2:
             return [Apod(i).hdurl for i in results.json()]
-        warn("The Image value type is invalid (it can have one of the following values : 0, 1, 2)")
+        warn(
+            "The Image value type is invalid (it can have one of the following values : 0, 1, 2)"
+        )
         return [Apod(i) for i in results.json()]
 
     @staticmethod
@@ -93,6 +101,7 @@ class APOD(Base):
         elif self.image_only == 2:
             return result.hdurl
         else:
-            warn("The Image value type is invalid (it can have one of the following values : 0, 1, 2)")
+            warn(
+                "The Image value type is invalid (it can have one of the following values : 0, 1, 2)"
+            )
             return result
-        
