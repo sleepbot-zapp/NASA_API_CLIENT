@@ -2,7 +2,7 @@ from httpx import get as g
 from ..base_model import Base
 from .parser import Apod
 from datetime import date as d
-from .errors import DateBeyondException
+from .errors import DateBeyondException, IncorrectDataTypeException
 from warnings import warn
 
 
@@ -16,8 +16,9 @@ class Date:
         return f"{self.y}-{self.m}-{self.d}"
     
     @classmethod
-    def from_str(cls, string: str):
-        return Date(string[:3], string[3:5], string[5:])
+    def from_str__or_int(cls, string: str|int):
+        string = str(string).replace("-", "").replace("/", '')
+        return Date(string[:2], string[2:4], string[4:])
 
 
 class APOD(Base):
@@ -31,6 +32,10 @@ class APOD(Base):
         return self.check_image_only_type(Apod(g(self.base_url, params={"api_key": self.api_key}).json()))
 
     def date(self, date: Date|str) -> Apod:
+        if not isinstance(date, Date) and (isinstance(date, str)  or isinstance(date, int)):
+            date = Date.from_str(date)
+        else:
+            raise IncorrectDataTypeException(type(date),'Date, str, int')
         self.checkdate(date)
         return self.check_image_only_type(
             Apod(
@@ -41,6 +46,14 @@ class APOD(Base):
         )
 
     def range_dates(self, sd: Date, ed: Date) -> list[Apod]:
+        if not isinstance(sd, Date) and (isinstance(sd, str)  or isinstance(sd, int)):
+            sd = Date.from_str(sd)
+        else:
+            raise IncorrectDataTypeException(type(sd),'Date, str, int')
+        if not isinstance(ed, Date) and (isinstance(ed, str)  or isinstance(ed, int)):
+            ed = Date.from_str(ed)
+        else:
+            raise IncorrectDataTypeException(type(ed),'Date, str, int')
         self.checkdate(sd)
         self.checkdate(ed)
         results = g(
