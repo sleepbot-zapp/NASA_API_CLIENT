@@ -10,7 +10,7 @@ class NEOWS(Base):
     def __init__(self, api_key: str) -> None:
         super().__init__(api_key=api_key)  # type: ignore
 
-    def search(self, sd: Date|int|str, ed: Date|int|str) -> None:
+    def search(self, sd: Date | int | str, ed: Date | int | str) -> None:
         if not isinstance(sd, Date) and (isinstance(sd, str) or isinstance(sd, int)):
             sd = Date.from_str(sd)
         else:

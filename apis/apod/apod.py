@@ -6,7 +6,6 @@ from ..errors import IncorrectDataTypeException, DateBeyondException
 from warnings import warn
 
 
-
 class APOD(Base):
     base_url = "https://api.nasa.gov/planetary/apod"
 
@@ -19,7 +18,7 @@ class APOD(Base):
             Apod(g(self.base_url, params={"api_key": self.api_key}).json())
         )
 
-    def date(self, date: Date|int|str) -> Apod:
+    def date(self, date: Date | int | str) -> Apod:
         if not isinstance(date, Date) and (
             isinstance(date, str) or isinstance(date, int)
         ):
@@ -35,7 +34,7 @@ class APOD(Base):
             )
         )
 
-    def range_dates(self, sd: Date|int|str, ed: Date|int|str) -> list[Apod]:
+    def range_dates(self, sd: Date | int | str, ed: Date | int | str) -> list[Apod]:
         if not isinstance(sd, Date) and (isinstance(sd, str) or isinstance(sd, int)):
             sd = Date.from_str(sd)
         else:
