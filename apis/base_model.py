@@ -1,3 +1,9 @@
+from .errors import DateBeyondException
+from typing import TypeVar as TV
+from datetime import date as d
+
+Var = TV("Var", bound="Date")
+
 class Base:
     """
     A base class for all API models
@@ -15,6 +21,11 @@ class Date:
 
     def __str__(self) -> str:
         return f"{self.y}-{self.m}-{self.d}"
+    
+    @staticmethod
+    def checkdate(date: Var):
+        if int(str(date).replace("-", "")) > int(d.today().strftime("%Y%m%d")):
+            raise DateBeyondException(str(date))
 
     @classmethod
     def from_str__or_int(cls, string: str | int):

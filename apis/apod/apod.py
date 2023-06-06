@@ -1,8 +1,7 @@
 from httpx import get as g
 from ..base_models import Base, Date
 from .parser import Apod
-from datetime import date as d
-from ..errors import IncorrectDataTypeException, DateBeyondException
+from ..errors import IncorrectDataTypeException
 from warnings import warn
 
 
@@ -25,7 +24,7 @@ class APOD(Base):
             date = Date.from_str(date)
         else:
             raise IncorrectDataTypeException(type(date), "Date, str, int")
-        self.checkdate(date)
+        Date.checkdate(date)
         return self.check_image_only_type(
             Apod(
                 g(
@@ -43,8 +42,8 @@ class APOD(Base):
             ed = Date.from_str(ed)
         else:
             raise IncorrectDataTypeException(type(ed), "Date, str, int")
-        self.checkdate(sd)
-        self.checkdate(ed)
+        Date.checkdate(sd)
+        Date.checkdate(ed)
         results = g(
             self.base_url,
             params={"api_key": self.api_key, "start_date": sd, "end_date": ed},  # type: ignore
@@ -72,11 +71,6 @@ class APOD(Base):
             "The Image value type is invalid (it can have one of the following values : 0, 1, 2)"
         )
         return [Apod(i) for i in results.json()]
-
-    @staticmethod
-    def checkdate(date: Date):
-        if int(str(date).replace("-", "")) > int(d.today().strftime("%Y%m%d")):
-            raise DateBeyondException(str(date))
 
     def check_image_only_type(self, result):
         if self.image_only == 0:
